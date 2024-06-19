@@ -67,26 +67,26 @@ const ProductForm: React.FC<ProductFormProps> = ({initialData})=> {
     }, [])
 
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: initialData
+      resolver: zodResolver(formSchema),
+      defaultValues: initialData
         ? {
             ...initialData,
             collections: initialData.collections.map(
-                (collection) => collection._id
-            )
-        }
+              (collection) => collection._id
+            ),
+          }
         : {
-            title: '',
-            description:'',
+            title: "",
+            description: "",
             media: [],
-            category: '',
+            category: "",
             collections: [],
             tags: [],
             sizes: [],
             colors: [],
-            price: 0.1,
-            expense: 0.1,
-        },
+            price: 0.00,
+            expense: 0.00,
+          },
     });
 
     const handleKeyPress = (
@@ -99,98 +99,52 @@ const ProductForm: React.FC<ProductFormProps> = ({initialData})=> {
         }
     };
 
-    return (
-        <div className='p-10'>
-            <p className='text-heading2-bold'>Criar Produto</p>
-            <Separator className="bg-grey-1 mt-4 mb-7" />
-            <Form {...form}>
-        <form  className="space-y-8">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Titulo</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Titulo do produto"
-                    {...field}
-                    onKeyDown={handleKeyPress}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-1" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Descrinção</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Escreva detalhes sobre o produto..."
-                    {...field}
-                    rows={5}
-                    onKeyDown={handleKeyPress}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-1" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="media"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Imagem</FormLabel>
-                <FormControl>
-                  <ImageUpload
-                    value={field.value}
-                    onChange={(url) => field.onChange([...field.value, url])}
-                    onRemove={(url) =>
-                      field.onChange([
-                        ...field.value.filter((image) => image !== url),
-                      ])
-                    }
-                  />
-                </FormControl>
-                <FormMessage className="text-red-1" />
-              </FormItem>
-            )}
-          />
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      try {
+        setLoading(true);
+        const url = initialData
+          ? `/api/products/${initialData._id}`
+          : "/api/products";
+        const res = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify(values),
+        });
+        if (res.ok) {
+          setLoading(false);
+          toast.success(`Product ${initialData ? "updated" : "created"}`);
+          window.location.href = "/products";
+          router.push("/products");
+        }
+      } catch (err) {
+        console.log("[products_POST]", err);
+        toast.error("Algo deu errado! PorFavor tente novamente.");
+      }
+    };
 
-          <div className='md:grid md:grid-cols-3 gap-8'>
-          <FormField
+    return loading ? (
+      <Loader />
+    ) : (
+      <div className="p-10">
+        {initialData ? (
+          <div className="flex items-center justify-between">
+            <p className="text-heading2-bold">Editar Produto</p>
+            <Delete id={initialData._id} item="product" />
+          </div>
+        ) : (
+          <p className="text-heading2-bold">Criar Produto</p>
+        )}
+        <Separator className="bg-grey-1 mt-4 mb-7" />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
               control={form.control}
-              name="price"
+              name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço ($)</FormLabel>
+                  <FormLabel>Titulo</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      placeholder="Valor"
-                      {...field}
-                      onKeyDown={handleKeyPress}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="expense"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Desconto ($)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Expense"
+                      placeholder="Titulo do produto"
                       {...field}
                       onKeyDown={handleKeyPress}
                     />
@@ -201,14 +155,15 @@ const ProductForm: React.FC<ProductFormProps> = ({initialData})=> {
             />
             <FormField
               control={form.control}
-              name="category"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categoria</FormLabel>
+                  <FormLabel>Descrinção</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Categoria"
+                    <Textarea
+                      placeholder="Descrinção do produto"
                       {...field}
+                      rows={5}
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
@@ -218,18 +173,17 @@ const ProductForm: React.FC<ProductFormProps> = ({initialData})=> {
             />
             <FormField
               control={form.control}
-              name="tags"
+              name="media"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tags</FormLabel>
+                  <FormLabel>Imagem</FormLabel>
                   <FormControl>
-                    <MultiText
-                      placeholder="Tags"
+                    <ImageUpload
                       value={field.value}
-                      onChange={(tag) => field.onChange([...field.value, tag])}
-                      onRemove={(tagToRemove) =>
+                      onChange={(url) => field.onChange([...field.value, url])}
+                      onRemove={(url) =>
                         field.onChange([
-                          ...field.value.filter((tag) => tag !== tagToRemove),
+                          ...field.value.filter((image) => image !== url),
                         ])
                       }
                     />
@@ -238,13 +192,90 @@ const ProductForm: React.FC<ProductFormProps> = ({initialData})=> {
                 </FormItem>
               )}
             />
-            {collections.length > 0 && (
+  
+            <div className="md:grid md:grid-cols-3 gap-8">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preço ($)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="price"
+                        {...field}
+                        onKeyDown={handleKeyPress}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-1" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="expense"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Desconto ($)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Expense"
+                        {...field}
+                        onKeyDown={handleKeyPress}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-1" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Categoria</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Category"
+                        {...field}
+                        onKeyDown={handleKeyPress}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-1" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <MultiText
+                        placeholder="Tags"
+                        value={field.value}
+                        onChange={(tag) => field.onChange([...field.value, tag])}
+                        onRemove={(tagToRemove) =>
+                          field.onChange([
+                            ...field.value.filter((tag) => tag !== tagToRemove),
+                          ])
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-1" />
+                  </FormItem>
+                )}
+              />
+              {collections.length > 0 && (
               <FormField
                 control={form.control}
                 name="collections"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Coleções</FormLabel>
+                    <FormLabel>Collections</FormLabel>
                     <FormControl>
                       <MultiSelect
                         placeholder="Collections"
@@ -260,82 +291,86 @@ const ProductForm: React.FC<ProductFormProps> = ({initialData})=> {
                             ),
                           ])
                         }
+                        
                       />
+                      
                     </FormControl>
                     <FormMessage className="text-red-1" />
                   </FormItem>
                 )}
               />
             )}
-             <FormField
-              control={form.control}
-              name="colors"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cores</FormLabel>
-                  <FormControl>
-                    <MultiText
-                      placeholder="Colors"
-                      value={field.value}
-                      onChange={(color) =>
-                        field.onChange([...field.value, color])
-                      }
-                      onRemove={(colorToRemove) =>
-                        field.onChange([
-                          ...field.value.filter(
-                            (color) => color !== colorToRemove
-                          ),
-                        ])
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="sizes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tamanhos</FormLabel>
-                  <FormControl>
-                    <MultiText
-                      placeholder="Sizes"
-                      value={field.value}
-                      onChange={(size) =>
-                        field.onChange([...field.value, size])
-                      }
-                      onRemove={(sizeToRemove) =>
-                        field.onChange([
-                          ...field.value.filter(
-                            (size) => size !== sizeToRemove
-                          ),
-                        ])
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex gap-10">
-            <Button type="submit" className="bg-purple-600 text-white">
-              Enviar
-            </Button>
-            <Button
-              type="button"
-              onClick={() => router.push("/products")}
-              className="bg-blue-1 text-white"
-            >
-              Discartar
-            </Button>
+              <FormField
+                control={form.control}
+                name="colors"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cores</FormLabel>
+                    <FormControl>
+                      <MultiText
+                        placeholder="Colors"
+                        value={field.value}
+                        onChange={(color) =>
+                          field.onChange([...field.value, color])
+                        }
+                        onRemove={(colorToRemove) =>
+                          field.onChange([
+                            ...field.value.filter(
+                              (color) => color !== colorToRemove
+                            ),
+                          ])
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-1" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="sizes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tamanhos</FormLabel>
+                    <FormControl>
+                      <MultiText
+                        placeholder="Size"
+                        value={field.value}
+                        onChange={(size) =>
+                          field.onChange([...field.value, size])
+                        }
+                        onRemove={(sizeToRemove) =>
+                          field.onChange([
+                            ...field.value.filter(
+                              (size) => size !== sizeToRemove
+                            ),
+                          ])
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-1" />
+                  </FormItem>
+                )}
+              />
+            </div>
+  
+            <div className="flex gap-10">
+              <Button type="submit" className="bg-purple-600 text-white">
+                Enviar
+              </Button>
+              <Button
+                type="button"
+                onClick={() => router.push("/products")}
+                className="bg-blue-1 text-white"
+              >
+                Discartar 
+              </Button>
             </div>
           </form>
-          </Form>
-        </div>
-    )
-}
+        </Form>
+      </div>
+    );
+ };
 
+   
 export default ProductForm;
