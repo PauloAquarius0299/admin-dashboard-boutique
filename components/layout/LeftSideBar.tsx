@@ -1,6 +1,5 @@
 "use client"
 
-
 import SvgIcon from '@/svg/SvgIcon'
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
@@ -14,9 +13,12 @@ const LeftSideBar = () => {
 
   return (
     <div className='h-screen left-0 top-0 sticky p-10 flex flex-col gap-16 bg-purple-200 shadow-xl max-lg:hidden'>
-        <div className=' flex items-center '>
-                <p className='font-bold text-purple-600 text-4xl'>Boutique <span className='text-black'>Admin</span></p>
-        </div>
+        <Link href='/' className="flex items-center space-x-4">
+      <div className='flex items-center justify-center bg-purple-600 rounded-lg p-4 w-16 h-16'>
+        <SvgIcon />
+      </div>
+      <h1 className=' text-heading2-bold font-bold cursor-pointer text-black'><span className='text-purple-600'>Boutique</span> Loja</h1>
+    </Link>
 
         <div className='flex flex-col gap-12'>
             {navLinks.map((link) => (
