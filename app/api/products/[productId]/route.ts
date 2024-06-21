@@ -30,76 +30,101 @@ export const GET = async (
     }
 }
 
-export const POST = async (req: NextRequest, {params}: {params: {productId: string}}) => {
-    try {
-        const {userId} = auth()
+export const POST = async (
+  req: NextRequest,
+  { params }: { params: { productId: string } }
+) => {
+  try {
+    const { userId } = auth();
 
-        if(!userId){
-            return new NextResponse('Unauthorized', {status:401})
-        }
-        await connectToDB()
-        const product = await Product.findById(params.productId)
-        if(!product){
-            return new NextResponse(JSON.stringify({message: 'Produto não encontrado'}), {status:404})
-        }
-        const {title, 
-            description, 
-            media, 
-            category, 
-            collections, 
-            tags, 
-            sizes, 
-            colors, 
-            price, 
-            expense} = await req.json()
-
-        if (!title || !description || !media || !category || !price || !expense){
-            return new NextResponse('Não há data para criar um novo Produto', {status:400})
-        }
-        const addedCollections = collections.filter((collectionId: string) => !product.collections.includes(collectionId))
-        //incluir uma nova data, mas não incluir a data anterior
-        const removedCollections = collections.filter((collectionId: string) => !product.collections.includes(collectionId))
-        //incluir a anterior, mas não incluir a nova data
-
-        
-        //update collections
-        await Promise.all([
-            //atualizar added collections com o produto
-            ...addedCollections.map((collectionId:string) => 
-            Collection.findByIdAndUpdate(collectionId, {
-                $push: {product: product._id},
-            })),
-            //remover o collections 
-            ...removedCollections.map((collectionId: string) => 
-            Collection.findByIdAndUpdate(collectionId, {
-                $push: {products: product._id},
-            }))
-        ]);
-
-        const updatedProduct = await Product.findByIdAndUpdate(
-            product._id,
-            {
-              title,
-              description,
-              media,
-              category,
-              collections,
-              tags,
-              sizes,
-              colors,
-              price,
-              expense,
-            },
-            { new: true }).populate({ path: "collections", model: Collection })
-
-            await updatedProduct.save()
-
-            return NextResponse.json(updatedProduct, {status:200})
-    } catch (err) {
-        console.log("[productId_POST]", err)
-        return new NextResponse('Internal error', {status:500})
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
-}
+
+    await connectToDB();
+
+    const product = await Product.findById(params.productId);
+
+    if (!product) {
+      return new NextResponse(
+        JSON.stringify({ message: "Product not found" }),
+        { status: 404 }
+      );
+    }
+
+    const {
+      title,
+      description,
+      media,
+      category,
+      collections,
+      tags,
+      sizes,
+      colors,
+      price,
+      expense,
+    } = await req.json();
+
+    if (!title || !description || !media || !category || !price || !expense) {
+      return new NextResponse("Not enough data to create a new product", {
+        status: 400,
+      });
+    }
+
+    const addedCollections = collections.filter(
+      (collectionId: string) => !product.collections.includes(collectionId)
+    );
+    // included in new data, but not included in the previous data
+
+    const removedCollections = product.collections.filter(
+      (collectionId: string) => !collections.includes(collectionId)
+    );
+    // included in previous data, but not included in the new data
+
+    // Update collections
+    await Promise.all([
+      // Update added collections with this product
+      ...addedCollections.map((collectionId: string) =>
+        Collection.findByIdAndUpdate(collectionId, {
+          $push: { products: product._id },
+        })
+      ),
+
+      // Update removed collections without this product
+      ...removedCollections.map((collectionId: string) =>
+        Collection.findByIdAndUpdate(collectionId, {
+          $pull: { products: product._id },
+        })
+      ),
+    ]);
+
+    // Update product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      product._id,
+      {
+        title,
+        description,
+        media,
+        category,
+        collections,
+        tags,
+        sizes,
+        colors,
+        price,
+        expense,
+      },
+      { new: true }
+    ).populate({ path: "collections", model: Collection });
+
+    await updatedProduct.save();
+
+    return NextResponse.json(updatedProduct, { status: 200 });
+  } catch (err) {
+    console.log("[productId_POST]", err);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+};
+
 
 export const DELETE = async (
     req: NextRequest,
