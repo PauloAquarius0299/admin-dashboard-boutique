@@ -1,4 +1,5 @@
-# Boutique AD
+# Boutique ADM
+![Captura de Tela (241)](https://github.com/PauloAquarius0299/admin-dashboard-boutique/assets/114706743/822c9556-37e7-4e6c-a15c-dd340b60299f)
 Plataforma de administrador do Boutique-ecommerce com TypeScript, Stripe api, Nextjs, React, Tailwindcss, MongoDB Shand-ui e Clerk
 ## Introdução 
 A plataforma foca na area adimistrativa do website Boutique onde consigo publicar post dos catalogos de coleção e produtos e vizualizar o faturamento da loja. Apos fazer qualquer postagem ou atualizar qualquer area dessa plataforma, os dados serão hospedados autometicamente no database do mongodb para serem publicados na plataforma ecommerce. O adm consegue ter acesso a plataforma logando e criando uma conta
@@ -15,6 +16,16 @@ A plataforma foca na area adimistrativa do website Boutique onde consigo publica
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ## Plataforma
+### Area de coleção:  para o adm publicar as coleções que serão exibidos em Butique
+![Captura de Tela (242)](https://github.com/PauloAquarius0299/admin-dashboard-boutique/assets/114706743/d4ea6fcd-8138-4476-9f13-cef757aa1004)
+![Captura de Tela (243)](https://github.com/PauloAquarius0299/admin-dashboard-boutique/assets/114706743/ae3bb184-3953-4e78-a92d-f6f3458451a9)
+### Area de Produtos: para o adm publicar os produtos que serão exibidos em Boutique
+![Captura de Tela (245)](https://github.com/PauloAquarius0299/admin-dashboard-boutique/assets/114706743/d3755c16-72eb-4981-a689-578402f651c8)
+![Captura de Tela (247)](https://github.com/PauloAquarius0299/admin-dashboard-boutique/assets/114706743/49186ef5-8433-4d4d-b0a9-6c9c4f052f9b)
+### Area de Clientes: Onde o adm consegue vizualizar o ID, produtos, clientes e o total que ele gastou
+![Captura de Tela (248)](https://github.com/PauloAquarius0299/admin-dashboard-boutique/assets/114706743/01e50568-f0cd-4f4b-a93e-e51cae464eab)
+
+
 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
