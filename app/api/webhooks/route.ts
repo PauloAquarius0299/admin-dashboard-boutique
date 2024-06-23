@@ -58,6 +58,7 @@ export const POST = async (req: NextRequest) => {
         totalAmount: session.amount_total ? session.amount_total / 100 : 0,
       })
 
+
       await newOrder.save()
 
       let customer = await Customer.findOne({ clerkId: customerInfo.clerkId })

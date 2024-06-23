@@ -24,7 +24,7 @@ import Delete from "../custom ui/Delete";
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
-  description: z.string().min(2).max(500).trim(),
+  description: z.string().min(2).max(2000).trim(),
   image: z.string(),
 });
 
