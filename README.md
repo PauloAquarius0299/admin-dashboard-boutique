@@ -1,3 +1,22 @@
+# Boutique AD
+Plataforma de administrador do Boutique-ecommerce com TypeScript, Stripe api, Nextjs, React, Tailwindcss, MongoDB Shand-ui e Clerk
+## Introdução 
+A plataforma foca na area adimistrativa do website Boutique onde consigo publicar post dos catalogos de coleção e produtos e vizualizar o faturamento da loja. Apos fazer qualquer postagem ou atualizar qualquer area dessa plataforma, os dados serão hospedados autometicamente no database do mongodb para serem publicados na plataforma ecommerce. O adm consegue ter acesso a plataforma logando e criando uma conta
+### Pre-Requisitos 
+* Nextjs: como framework
+* Mongodb: para criar a hospedagem das postagens em coleção e produtos
+* shand-ui: facilitar a estilização
+* tailwind: estilização
+* Clerk Auth: para criar um simples rota de autentificação de usuario
+### Ferramentas 
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+## Plataforma
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
